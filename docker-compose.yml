@@ -1,0 +1,48 @@
+version: '3.3'
+
+services:
+  database:
+    image: mysql
+    container_name: database
+    environment:
+      MYSQL_ROOT_PASSWORD: ashu
+      MYSQL_DATABASE: Reap
+      MYSQL_USER: ashu
+      MYSQL_PASSWORD: ashu
+    restart: always
+    ports:
+      - 3307:3306
+    volumes:
+      - dockerDatabaseData:/var/lib/mysql
+    networks:
+      - backendNetwork
+
+  studentTravel:
+    depends_on:
+      - database
+    restart: on-failure
+    image: divyanshuvijay43/student_back:latest
+    container_name: studentTravel
+    ports:
+      - 5050:5050
+    networks:
+      - backendNetwork
+      - frontendNetwork
+
+  reactApp:
+    image: divyanshuvijay43/student_front:latest
+    container_name: reactApp
+    ports:
+      - 4200:80
+    depends_on:
+      - studentTravel
+    networks:
+      - frontendNetwork
+
+
+volumes:
+  dockerDatabaseData:
+
+networks:
+  backendNetwork:
+  frontendNetwork:
